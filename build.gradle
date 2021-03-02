@@ -29,9 +29,12 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.2'
-    implementation 'com.graphql-java:graphql-java:11.0' // NEW
-    implementation 'com.graphql-java:graphql-java-spring-boot-starter-webmvc:1.0' // NEW
-    implementation 'com.google.guava:guava:26.0-jre' // NEW
+    // https://mvnrepository.com/artifact/com.graphql-java/graphql-spring-boot-starter
+    implementation group: 'com.graphql-java', name: 'graphql-spring-boot-starter', version: '5.0.2'
+    // https://mvnrepository.com/artifact/com.graphql-java/graphql-java-tools
+    implementation group: 'com.graphql-java', name: 'graphql-java-tools', version: '5.2.4'
+    // https://mvnrepository.com/artifact/io.leangen.graphql/graphql-spqr-spring-boot-starter
+    implementation group: 'io.leangen.graphql', name: 'graphql-spqr-spring-boot-starter', version: '0.0.5'
 
     compile group: 'org.bgee.log4jdbc-log4j2', name: 'log4jdbc-log4j2-jdbc4.1', version: '1.16'
     runtimeOnly 'mysql:mysql-connector-java'

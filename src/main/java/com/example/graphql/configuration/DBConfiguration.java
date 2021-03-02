@@ -1,6 +1,8 @@
 package com.example.graphql.configuration;
 
 import javax.sql.DataSource;
+
+import graphql.GraphQL;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;

@@ -1,58 +1,27 @@
-package com.example.graphql.service.user;
+package com.example.graphql.service.member;
 
-import com.example.graphql.dataFetcher.UserDataFetcher;
-import com.example.graphql.domain.repository.UserRepository;
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
-import graphql.GraphQL;
-import graphql.schema.GraphQLSchema;
-import graphql.schema.idl.*;
+import com.example.graphql.domain.repository.MemberRepository;
+import com.example.graphql.domain.vo.MemberEntity;
+import io.leangen.graphql.annotations.GraphQLQuery;
+import io.leangen.graphql.spqr.spring.annotations.GraphQLApi;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.net.URL;
+import java.util.List;
 
 @Service
-public class UserService {
+@GraphQLApi
+public class MemberService {
     @Autowired
-    UserRepository userRepository;
+    private MemberRepository memberRepository;
 
-    @Autowired
-    UserDataFetcher userDataFetcher;
-
-    @Value("classpath:graphql/userSchema.graphqls")
-    Resource resource;
-
-    private GraphQL graphQL;
-
-    @PostConstruct
-    public void init() throws IOException {
-        URL url = resource.getURL();
-        String sdl = Resources.toString(url, Charsets.UTF_8);
-        GraphQLSchema graphQLSchema = buildSchema(sdl);
-        graphQL = GraphQL.newGraphQL(graphQLSchema).build();
+    @GraphQLQuery(name = "getAllMembers")
+    public List<MemberEntity> getAllMembers() {
+        return memberRepository.findAll();
     }
 
-    private GraphQLSchema buildSchema(String sdl) {
-        TypeDefinitionRegistry typeRegistry = new SchemaParser().parse(sdl);
-        RuntimeWiring runtimeWiring = buildWiring();
-        SchemaGenerator schemaGenerator = new SchemaGenerator();
-        return schemaGenerator.makeExecutableSchema(typeRegistry, runtimeWiring);
-    }
-
-    private RuntimeWiring buildWiring() {
-        System.out.println("여기ㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣ");
-        return RuntimeWiring.newRuntimeWiring()
-                .type(
-                        TypeRuntimeWiring
-                                .newTypeWiring("Query")
-                                .dataFetcher("allUsers", userDataFetcher.allUsers())
-                                .dataFetcher("user", userDataFetcher.user())
-                )
-                .build();
+    @GraphQLQuery(name = "getMember")
+    public MemberEntity getMember(Integer memberNo) {
+        // 받는 파라미터명이 스키마의 변수명과 일치하여야 함.
+        return memberRepository.findById(memberNo).get();
     }
 }

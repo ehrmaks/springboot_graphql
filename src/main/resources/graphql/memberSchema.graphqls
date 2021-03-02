@@ -1,11 +1,20 @@
 type Query {
-    allUsers: [User]
-    user(id: Int): User
+    getAllMembers: [Member]
+    getMember(memberNo: ID!): Member
 }
 
-type User {
-    id: Int!
+type Member {
+    memberNo: ID!
+    address1: String
+    address2: String
     createDt: String
+    email: String
+    name: String
+    postNo: String
     updateDt: String
-    userNm: String
+    userId: String
+    profileImg: String
+    phoneNo: String
+    secYn: String
+    useYn: String
 }
