@@ -1,0 +1,11 @@
+type Query {
+    allUsers: [User]
+    user(id: Int): User
+}
+
+type User {
+    id: Int!
+    createDt: String
+    updateDt: String
+    userNm: String
+}

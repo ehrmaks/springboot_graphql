@@ -1,4 +1,4 @@
-package com.example.graphql.service.user;
+package com.example.graphql.domain.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 

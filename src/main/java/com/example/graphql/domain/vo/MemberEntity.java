@@ -11,18 +11,17 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "user")
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int userId;
+    private int id;
 
-    @Column(length = 30, nullable = false)
-    private String userName;
-
-    @CreationTimestamp
-    private LocalDateTime createdDt;
+    @Column(length = 20)
+    private String userNm;
 
     @CreationTimestamp
-    private LocalDateTime createdAt;
+    private LocalDateTime createDt;
+
+    @CreationTimestamp
+    private LocalDateTime updateDt;
 }
