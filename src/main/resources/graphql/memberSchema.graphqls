@@ -1,20 +1,10 @@
 type Query {
-    getAllMembers: [Member]
-    getMember(memberNo: ID!): Member
+    getAllMembers: [MemberEntity]
+    getMember(memberNo: ID!): MemberEntity
 }
 
-type Member {
-    memberNo: ID!
-    address1: String
-    address2: String
-    createDt: String
-    email: String
-    name: String
-    postNo: String
-    updateDt: String
-    userId: String
-    profileImg: String
-    phoneNo: String
-    secYn: String
-    useYn: String
+type Mutation {
+    insertMember(input: MemberEntityInput!): MemberEntity!
+    updateMember(input: MemberEntityInput!): MemberEntity!
+    deleteMember(memberNo: ID!): MemberEntity!
 }
