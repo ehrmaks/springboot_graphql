@@ -1,14 +1,14 @@
-package com.example.graphql.service.member;
+package com.example.graphql.service.user;
 
-import com.example.graphql.domain.repository.MemberRepository;
-import com.example.graphql.domain.vo.Member;
-import com.example.graphql.domain.vo.QMember;
+import com.example.graphql.domain.model.JwtUser;
+import com.example.graphql.domain.model.QJwtUser;
+import com.example.graphql.domain.repository.UserRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.leangen.graphql.annotations.GraphQLMutation;
 import io.leangen.graphql.annotations.GraphQLQuery;
 import io.leangen.graphql.spqr.spring.annotations.GraphQLApi;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,15 +19,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @GraphQLApi
-public class MemberService {
+@RequiredArgsConstructor
+public class UserService {
+//    @Autowired
+//    private userRepository userRepository;
     @Autowired
-    private MemberRepository memberRepository;
+    private UserRepository userRepository;
+
+//    @AuthenticationPrincipal
+//    private JwtUser authCheck;
 
 
 
@@ -36,21 +40,21 @@ public class MemberService {
 
     /*
         query {
-            getAllMembers {
+            getAllUsers {
                 memberNo
                 userId
                 ...
             }
         }
     * */
-    @GraphQLQuery(name = "getAllMembers")
-    public List<Member> getAllMembers() {
-        return memberRepository.findAll();
+    @GraphQLQuery(name = "getAllUsers")
+    public List<JwtUser> getAllUsers() {
+        return userRepository.findAll();
     }
 
     /*
         query {
-          getPagingMember(page: 1, size: 5) {
+          getPagingUser(page: 1, size: 5) {
             content{
               memberNo
               userId
@@ -63,16 +67,16 @@ public class MemberService {
           }
         }
     * */
-    @GraphQLQuery(name = "getPagingMember")
-    public Page<Member> getPagingMember(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Direction.DESC, "memberNo");
-        return memberRepository.findAll(pageable);
+    @GraphQLQuery(name = "getPagingUser")
+    public Page<JwtUser> getPagingUser(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Direction.DESC, "JwtUserNo");
+        return userRepository.findAll(pageable);
     }
 
     // d
     /*
         query {
-          getMemberList(page:1, size:5, name: "jskim", email:"qwefk1234") {
+          getUserList(page:1, size:5, name: "jskim", email:"qwefk1234") {
             memberNo
             userId
             name
@@ -82,7 +86,7 @@ public class MemberService {
     * */
     /*
         query{
-          getMemberList(page: 0, size: 5, name:"사나", email:"kjsfk") {
+          getUserList(page: 0, size: 5, name:"사나", email:"kjsfk") {
             content {
               userId
             }
@@ -90,24 +94,24 @@ public class MemberService {
           }
         }
     * */
-    @GraphQLQuery(name = "getMemberList")
-    public Page<Member> getMemberList(int page, int size, String name, String email) {
+    @GraphQLQuery(name = "getUserList")
+    public Page<JwtUser> getUserList(int page, int size, String name, String email) {
 //        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
         // 멤버 Entity 경로를 가져옴
-//        QMember m = QMember.member;
+//        QJwtUser m = QJwtUser.JwtUser;
 //        Predicate builder = predicate(name, email);
 //
 //        Map<String, Object> map = new HashMap<>();
-//        int totalElements = memberRepository.findAll().size();
+//        int totalElements = userRepository.findAll().size();
 //        int totalPage = (int) Math.ceil(totalElements / size);
 //
 //
-//        List<Member> list = queryFactory
+//        List<JwtUser> list = queryFactory
 //                                .selectFrom(m)
 //                                .where(builder)
 //                                .limit(size)
 //                                .offset((page - 1) * size)
-//                                .orderBy(m.memberNo.desc())
+//                                .orderBy(m.JwtUserNo.desc())
 //                                .fetch();
 //
 //        map.put("data", list);
@@ -116,15 +120,15 @@ public class MemberService {
 //
 //        return map;
 
-        // Page_Member 생성
-        Pageable pageable = PageRequest.of(page, size, Direction.DESC, "memberNo");
+        // Page_JwtUser 생성
+        Pageable pageable = PageRequest.of(page, size, Direction.DESC, "JwtUserNo");
 
-        return memberRepository.findAll(predicate(name, email), pageable);
+        return userRepository.findAll(predicate(name, email), pageable);
     }
 
     // Predicate 필터 조건 설정
     public Predicate predicate(String name, String email) {
-        QMember m = QMember.member;
+        QJwtUser m = QJwtUser.jwtUser;
 
         // where 조건절의 동적 쿼리를 위한 셋팅
         BooleanBuilder builder = new BooleanBuilder();
@@ -142,21 +146,21 @@ public class MemberService {
 
     /*
         query {
-            getMember(memberNo: 25) {
+            getJwtUser(memberNo: 25) {
                 userId
                 ...
             }
         }
     * */
-    @GraphQLQuery(name = "getMember")
-    public Member getMember(Integer memberNo) {
+    @GraphQLQuery(name = "getUser")
+    public JwtUser getJwtUser(Integer memberNo) {
         // 받는 파라미터명이 스키마의 변수명과 일치하여야 함.
-        return memberRepository.findById(memberNo).get();
+        return userRepository.findById(memberNo).get();
     }
 
     /*
         mutation {
-            insertMember(member : {
+            insertUser(member : {
                 address1: "seoul"
                 address2: "sillim"
                 email: "qwefk12345@naver.com"
@@ -170,19 +174,19 @@ public class MemberService {
         }
     * */
     @Transactional
-    @GraphQLMutation(name = "insertMember")
-    public int insertMember(Member member) {
-        member.setSecYn("N");
-        member.setUseYn("Y");
-        Integer memberNo = memberRepository.save(member).getMemberNo();
+    @GraphQLMutation(name = "insertUser")
+    public int insertUser(JwtUser JwtUser) {
+        JwtUser.setSecYn("N");
+        JwtUser.setUseYn("Y");
+        Integer memberNo = userRepository.save(JwtUser).getMemberNo();
         if (memberNo != null) return 1;
         else return 0;
     }
 
     /*
         mutation {
-            updateMember(member : {
-              memberNo: 26
+            updateUser(member : {
+                memberNo: 26
                 address1: "seoul"
                 address2: "sillim"
                 email: "qwefk1234@naver.com"
@@ -196,28 +200,30 @@ public class MemberService {
         }
     * */
     @Transactional
-    @GraphQLMutation(name = "updateMember")
-    public int updateMember(Member member) {
-        Integer memberNo = member.getMemberNo();
-        if (member.getMemberNo() != null) {
-            member.setSecYn("N");
-            member.setUseYn("Y");
-            memberRepository.save(member);
-            return 1;
-        }
+    @GraphQLMutation(name = "updateUser")
+    public int updateUser(JwtUser JwtUser) {
+//        if (authCheck != null) {
+            Integer memberNo = JwtUser.getMemberNo();
+            if (JwtUser.getMemberNo() != null) {
+                JwtUser.setSecYn("N");
+                JwtUser.setUseYn("Y");
+                userRepository.save(JwtUser);
+                return 1;
+            }
+//        }
         return 0;
     }
 
     /*
         mutation{
-          deleteMember(memberNo: 28)
+          deleteUser(memberNo: 28)
         }
     * */
     @Transactional
-    @GraphQLMutation(name = "deleteMember")
-    public int deleteMember(Integer memberNo) {
-        if (memberNo != null) {
-            memberRepository.deleteById(memberNo);
+    @GraphQLMutation(name = "deleteUser")
+    public int deleteJwtUser(Integer JwtUserNo) {
+        if (JwtUserNo != null) {
+            userRepository.deleteById(JwtUserNo);
             return 1;
         }
         return 0;
