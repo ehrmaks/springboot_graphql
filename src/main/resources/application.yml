@@ -45,8 +45,8 @@ graphql:
 #cloud:
 #  aws:
 #    credentials:
-#      access-key: AKIA5Z4TV4JITBVRL454
-#      secret-key: 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
+#      access-key:
+#      secret-key: 
 #    region:
 #      static: ap-northeast-2
 #    stack:
