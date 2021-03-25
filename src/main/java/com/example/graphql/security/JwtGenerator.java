@@ -8,11 +8,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JwtGenerator {
-
-
+    
+    // JWT 토큰 생성 작업을 수행 하기위한 메소드
     public String generate(JwtUser jwtUser) {
-
-
         Claims claims = Jwts.claims()
                 .setSubject(jwtUser.getName());
         claims.put("password", String.valueOf(jwtUser.getPasswd()));

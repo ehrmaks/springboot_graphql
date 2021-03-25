@@ -17,7 +17,6 @@ class GraphqlApplicationTests {
                 .signWith(SignatureAlgorithm.HS512, "abcd")
                 .compact();
 
-        System.out.println("jwt 테스트 : " + jwtString);
     }
 
 }

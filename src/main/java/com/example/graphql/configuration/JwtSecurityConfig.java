@@ -22,7 +22,9 @@ import java.util.Collections;
 @EnableWebSecurity
 @Configuration
 public class JwtSecurityConfig extends WebSecurityConfigurerAdapter {
-
+    // 자격 증명으로 사용자를 인증하기 위해 Spring Security를 ​​사용합니다.
+    // 위의 POM.xml 파일에서 이미 Spring Security 종속성을 추가했습니다.
+    // 이제 Spring Security 구성 세부 사항을 포함 할 새 구성 클래스를 작성해야합니다.
 
     @Autowired
     private JwtAuthenticationProvider authenticationProvider;
