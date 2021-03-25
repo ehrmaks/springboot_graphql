@@ -10,7 +10,7 @@ spring:
   datasource:
     hikari:
       driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-      jdbc-url: jdbc:log4jdbc:mysql://localhost:3306/management?useSSL=false&useUnicode=true&characterEncoding=utf8
+      jdbc-url: jdbc:log4jdbc:mysql://localhost:3306/management?useSSL=false&useUnicode=true&characterEncoding=utf8&allowPublicKeyRetrieval=true
       username: root
       password: test1234
       connection-test-query: SELECT NOW() FROM dual
@@ -42,6 +42,8 @@ graphql:
       enabled: true
     endpoint: /graphql
 
+jwt:
+  secret: MyScret
 #cloud:
 #  aws:
 #    credentials:

@@ -96,4 +96,8 @@ public class JwtUser {
     @Column(length = 1000)
     @GraphQLQuery(name = "role")
     private String role;
+
+    // 토큰큰
+   @Column(name = "token")
+    private String token;
 }

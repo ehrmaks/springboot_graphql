@@ -1,231 +1,65 @@
 package com.example.graphql.service.user;
 
-import com.example.graphql.domain.model.JwtUser;
-import com.example.graphql.domain.model.QJwtUser;
+import com.example.graphql.domain.model.User;
 import com.example.graphql.domain.repository.UserRepository;
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Predicate;
+import com.example.graphql.exception.InvalidCredentialsException;
+import com.example.graphql.security.jwt.JwtTokenUtil;
+import io.leangen.graphql.annotations.GraphQLArgument;
 import io.leangen.graphql.annotations.GraphQLMutation;
 import io.leangen.graphql.annotations.GraphQLQuery;
-import io.leangen.graphql.spqr.spring.annotations.GraphQLApi;
-import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Optional;
 
 @Service
-@GraphQLApi
-@RequiredArgsConstructor
 public class UserService {
-//    @Autowired
-//    private userRepository userRepository;
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
+    private JwtTokenUtil jwtTokenUtil;
     private UserRepository userRepository;
 
-//    @AuthenticationPrincipal
-//    private JwtUser authCheck;
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
 
-
-    @PersistenceContext
-    private EntityManager em; // 영속성 객체를 자동으로 삽입해줌
-
-    /*
-        query {
-            getAllUsers {
-                memberNo
-                userId
-                ...
-            }
-        }
-    * */
-    @GraphQLQuery(name = "getAllUsers")
-    public List<JwtUser> getAllUsers() {
+    @GraphQLQuery(name = "users")
+    public List<User> getUsers() {
         return userRepository.findAll();
     }
 
-    /*
-        query {
-          getPagingUser(page: 1, size: 5) {
-            content{
-              memberNo
-              userId
-              profileImg
-              address1
-              address2
+    @PreAuthorize("hasRole('ADMIN')")
+    @GraphQLQuery(name = "user")
+    public Optional<User> getUserById(@GraphQLArgument(name = "id") Long id) {
+        return userRepository.findById(id);
+    }
+
+
+    @GraphQLMutation(name = "signin")
+    public String signin(@GraphQLArgument(name = "username") String username,
+                         @GraphQLArgument(name = "password") String password) throws InvalidCredentialsException {
+        System.out.println(username + " ====== " + password);
+        Optional<User> user = userRepository.findByUsername(username);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        if(user.isPresent()) {
+            if (encoder.matches(password, user.get().getPassword())) {
+                logger.info("success...");
+                return jwtTokenUtil.generateToken(user.get().getUsername());
+            } else {
+                logger.info("Invalid Credentials1");
+                throw new InvalidCredentialsException("Invalid Credentials!");
             }
-            size
-            totalPages
-          }
+        } else{
+            logger.info("Invalid Credentials2");
+            throw new InvalidCredentialsException("Invalid Credentials!");
         }
-    * */
-    @GraphQLQuery(name = "getPagingUser")
-    public Page<JwtUser> getPagingUser(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Direction.DESC, "JwtUserNo");
-        return userRepository.findAll(pageable);
     }
 
-    // d
-    /*
-        query {
-          getUserList(page:1, size:5, name: "jskim", email:"qwefk1234") {
-            memberNo
-            userId
-            name
-            email
-          }
-        }
-    * */
-    /*
-        query{
-          getUserList(page: 0, size: 5, name:"사나", email:"kjsfk") {
-            content {
-              userId
-            }
-            totalPages
-          }
-        }
-    * */
-    @GraphQLQuery(name = "getUserList")
-    public Page<JwtUser> getUserList(int page, int size, String name, String email) {
-//        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
-        // 멤버 Entity 경로를 가져옴
-//        QJwtUser m = QJwtUser.JwtUser;
-//        Predicate builder = predicate(name, email);
-//
-//        Map<String, Object> map = new HashMap<>();
-//        int totalElements = userRepository.findAll().size();
-//        int totalPage = (int) Math.ceil(totalElements / size);
-//
-//
-//        List<JwtUser> list = queryFactory
-//                                .selectFrom(m)
-//                                .where(builder)
-//                                .limit(size)
-//                                .offset((page - 1) * size)
-//                                .orderBy(m.JwtUserNo.desc())
-//                                .fetch();
-//
-//        map.put("data", list);
-//        map.put("totalElements", totalElements);
-//        map.put("totalPage", totalPage);
-//
-//        return map;
-
-        // Page_JwtUser 생성
-        Pageable pageable = PageRequest.of(page, size, Direction.DESC, "JwtUserNo");
-
-        return userRepository.findAll(predicate(name, email), pageable);
-    }
-
-    // Predicate 필터 조건 설정
-    public Predicate predicate(String name, String email) {
-        QJwtUser m = QJwtUser.jwtUser;
-
-        // where 조건절의 동적 쿼리를 위한 셋팅
-        BooleanBuilder builder = new BooleanBuilder();
-
-        if (name != null) {
-            builder.and(m.name.like("%" + name + "%"));
-        }
-
-        if (email != null) {
-            builder.and(m.email.like("%" + email + "%"));
-        }
-
-        return builder;
-    }
-
-    /*
-        query {
-            getJwtUser(memberNo: 25) {
-                userId
-                ...
-            }
-        }
-    * */
-    @GraphQLQuery(name = "getUser")
-    public JwtUser getJwtUser(Integer memberNo) {
-        // 받는 파라미터명이 스키마의 변수명과 일치하여야 함.
-        return userRepository.findById(memberNo).get();
-    }
-
-    /*
-        mutation {
-            insertUser(member : {
-                address1: "seoul"
-                address2: "sillim"
-                email: "qwefk12345@naver.com"
-                name: "jskim"
-                passwd: "12345"
-                postNo: "02334"
-                userId: "ehrmaks1234"
-                profileImg: ""
-                phoneNo: "010-3524-0022"
-            })
-        }
-    * */
-    @Transactional
-    @GraphQLMutation(name = "insertUser")
-    public int insertUser(JwtUser JwtUser) {
-        JwtUser.setSecYn("N");
-        JwtUser.setUseYn("Y");
-        Integer memberNo = userRepository.save(JwtUser).getMemberNo();
-        if (memberNo != null) return 1;
-        else return 0;
-    }
-
-    /*
-        mutation {
-            updateUser(member : {
-                memberNo: 26
-                address1: "seoul"
-                address2: "sillim"
-                email: "qwefk1234@naver.com"
-                name: "jskim"
-                passwd: "1234"
-                postNo: "02334"
-                userId: "ehrmaks123"
-                profileImg: ""
-                phoneNo: "010-3524-0022"
-            })
-        }
-    * */
-    @Transactional
-    @GraphQLMutation(name = "updateUser")
-    public int updateUser(JwtUser JwtUser) {
-//        if (authCheck != null) {
-            Integer memberNo = JwtUser.getMemberNo();
-            if (JwtUser.getMemberNo() != null) {
-                JwtUser.setSecYn("N");
-                JwtUser.setUseYn("Y");
-                userRepository.save(JwtUser);
-                return 1;
-            }
-//        }
-        return 0;
-    }
-
-    /*
-        mutation{
-          deleteUser(memberNo: 28)
-        }
-    * */
-    @Transactional
-    @GraphQLMutation(name = "deleteUser")
-    public int deleteJwtUser(Integer JwtUserNo) {
-        if (JwtUserNo != null) {
-            userRepository.deleteById(JwtUserNo);
-            return 1;
-        }
-        return 0;
-    }
 }

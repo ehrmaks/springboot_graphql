@@ -25,7 +25,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-tomcat'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.h2database:h2'
@@ -34,28 +33,36 @@ dependencies {
 
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.2'
     // https://mvnrepository.com/artifact/com.graphql-java/graphql-java
-    implementation group: 'com.graphql-java', name: 'graphql-java', version: '2021-03-22T20-02-28-3a701a0f'
+//    implementation group: 'com.graphql-java', name: 'graphql-java', version: '2021-03-22T20-02-28-3a701a0f'
     // https://mvnrepository.com/artifact/com.graphql-java/graphql-java-servlet
-    implementation group: 'com.graphql-java', name: 'graphql-java-servlet', version: '5.0.0'
+//    implementation group: 'com.graphql-java', name: 'graphql-java-servlet', version: '5.0.0'
 
     // https://mvnrepository.com/artifact/com.graphql-java/graphql-spring-boot-starter
-    implementation group: 'com.graphql-java', name: 'graphql-spring-boot-starter', version: '5.0.1'
+//    implementation group: 'com.graphql-java', name: 'graphql-spring-boot-starter', version: '5.0.1'
     // https://mvnrepository.com/artifact/com.graphql-java/graphql-java-tools
-    implementation group: 'com.graphql-java', name: 'graphql-java-tools', version: '5.0.0'
+//    implementation group: 'com.graphql-java', name: 'graphql-java-tools', version: '5.0.0'
 //    compile group: 'com.graphql-java', name: 'graphql-java-servlet', version: '5.1.0'
     // https://mvnrepository.com/artifact/com.coxautodev/graphql-java-tools
-    implementation group: 'com.coxautodev', name: 'graphql-java-tools', version: '2.1.2'
+//    implementation group: 'com.coxautodev', name: 'graphql-java-tools', version: '2.1.2'
 
 
     // https://mvnrepository.com/artifact/io.leangen.graphql/graphql-spqr-spring-boot-starter
-    implementation group: 'io.leangen.graphql', name: 'graphql-spqr-spring-boot-starter', version: '0.0.5'
+//    implementation group: 'io.leangen.graphql', name: 'graphql-spqr-spring-boot-starter', version: '0.0.5'
 
     compile group: 'org.bgee.log4jdbc-log4j2', name: 'log4jdbc-log4j2-jdbc4.1', version: '1.16'
-    // JWT 형식의 토큰을 발행하고 검증하는 모듈 (세션-쿠키 기반 X 토큰 O)
-    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+
     runtimeOnly 'mysql:mysql-connector-java'
     //querydsl 추가
     implementation 'com.querydsl:querydsl-jpa'
+
+    // graphql spqr 방식
+    // https://mvnrepository.com/artifact/io.leangen.graphql/spqr
+    implementation group: 'io.leangen.graphql', name: 'spqr', version: '0.9.7'
+
+    // JWT 형식의 토큰을 발행하고 검증하는 모듈 (세션-쿠키 기반 X 토큰 O)
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
+    implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.0'
 }
 
 /* Querydsl Q-class 추가 코드 */
