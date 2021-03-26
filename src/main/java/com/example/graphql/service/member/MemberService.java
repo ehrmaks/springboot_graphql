@@ -6,6 +6,8 @@ import com.example.graphql.domain.vo.QMember;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+
+import io.leangen.graphql.annotations.GraphQLArgument;
 import io.leangen.graphql.annotations.GraphQLMutation;
 import io.leangen.graphql.annotations.GraphQLQuery;
 import io.leangen.graphql.spqr.spring.annotations.GraphQLApi;
@@ -64,7 +66,9 @@ public class MemberService {
         }
     * */
     @GraphQLQuery(name = "getPagingMember")
-    public Page<Member> getPagingMember(int page, int size) {
+    public Page<Member> getPagingMember(
+    		@GraphQLArgument(name = "page") int page, 
+    		@GraphQLArgument(name = "size") int size) {
         Pageable pageable = PageRequest.of(page, size, Direction.DESC, "memberNo");
         return memberRepository.findAll(pageable);
     }
@@ -91,7 +95,11 @@ public class MemberService {
         }
     * */
     @GraphQLQuery(name = "getMemberList")
-    public Page<Member> getMemberList(int page, int size, String name, String email) {
+    public Page<Member> getMemberList(
+    		@GraphQLArgument(name = "page") int page, 
+    		@GraphQLArgument(name = "size") int size, 
+    		@GraphQLArgument(name = "name") String name, 
+    		@GraphQLArgument(name = "email") String email) {
 //        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
         // 멤버 Entity 경로를 가져옴
 //        QMember m = QMember.member;
@@ -149,7 +157,7 @@ public class MemberService {
         }
     * */
     @GraphQLQuery(name = "getMember")
-    public Member getMember(Integer memberNo) {
+    public Member getMember(@GraphQLArgument(name = "memberNo") Integer memberNo) {
         // 받는 파라미터명이 스키마의 변수명과 일치하여야 함.
         return memberRepository.findById(memberNo).get();
     }
@@ -171,7 +179,7 @@ public class MemberService {
     * */
     @Transactional
     @GraphQLMutation(name = "insertMember")
-    public int insertMember(Member member) {
+    public int insertMember(@GraphQLArgument(name = "member") Member member) {
         member.setSecYn("N");
         member.setUseYn("Y");
         Integer memberNo = memberRepository.save(member).getMemberNo();
@@ -197,7 +205,7 @@ public class MemberService {
     * */
     @Transactional
     @GraphQLMutation(name = "updateMember")
-    public int updateMember(Member member) {
+    public int updateMember(@GraphQLArgument(name = "member") Member member) {
         Integer memberNo = member.getMemberNo();
         if (member.getMemberNo() != null) {
             member.setSecYn("N");
@@ -215,7 +223,7 @@ public class MemberService {
     * */
     @Transactional
     @GraphQLMutation(name = "deleteMember")
-    public int deleteMember(Integer memberNo) {
+    public int deleteMember(@GraphQLArgument(name = "memberNo") Integer memberNo) {
         if (memberNo != null) {
             memberRepository.deleteById(memberNo);
             return 1;
