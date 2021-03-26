@@ -73,7 +73,6 @@ public class MemberService {
         return memberRepository.findAll(pageable);
     }
 
-    // d
     /*
         query {
           getMemberList(page:1, size:5, name: "jskim", email:"qwefk1234") {
@@ -101,7 +100,7 @@ public class MemberService {
     		@GraphQLArgument(name = "name") String name, 
     		@GraphQLArgument(name = "email") String email) {
 //        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
-        // 멤버 Entity 경로를 가져옴
+    	// 멤버 Entity 경로를 가져옴
 //        QMember m = QMember.member;
 //        Predicate builder = predicate(name, email);
 //
@@ -124,7 +123,7 @@ public class MemberService {
 //
 //        return map;
 
-        // Page_Member 생성
+        // Page_Member
         Pageable pageable = PageRequest.of(page, size, Direction.DESC, "memberNo");
 
         return memberRepository.findAll(predicate(name, email), pageable);
@@ -132,6 +131,7 @@ public class MemberService {
 
     // Predicate 필터 조건 설정
     public Predicate predicate(String name, String email) {
+        // 멤버 Entity 경로를 가져옴
         QMember m = QMember.member;
 
         // where 조건절의 동적 쿼리를 위한 셋팅
@@ -158,7 +158,6 @@ public class MemberService {
     * */
     @GraphQLQuery(name = "getMember")
     public Member getMember(@GraphQLArgument(name = "memberNo") Integer memberNo) {
-        // 받는 파라미터명이 스키마의 변수명과 일치하여야 함.
         return memberRepository.findById(memberNo).get();
     }
 
