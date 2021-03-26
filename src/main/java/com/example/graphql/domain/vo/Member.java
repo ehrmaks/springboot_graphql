@@ -1,5 +1,4 @@
-package com.example.graphql.domain.model;
-
+package com.example.graphql.domain.vo;
 
 import io.leangen.graphql.annotations.GraphQLQuery;
 import lombok.*;
@@ -9,19 +8,18 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+
 @Getter
 @Setter
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
 @ToString
 @Table(name = "member_info", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"userId", "email"})
 })
 @SequenceGenerator(name = "MEMBER_SEQ_GENERATOR", sequenceName = "MEMBER_SEQ", initialValue = 1, allocationSize = 1)
-public class JwtUser {
+public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MEMBER_SEQ_GENERATOR")
     @GraphQLQuery(name = "memberNo")
@@ -91,13 +89,4 @@ public class JwtUser {
     @Column(length = 2)
     @GraphQLQuery(name = "secYn")
     private String secYn;
-
-    // 롤
-    @Column(length = 1000)
-    @GraphQLQuery(name = "role")
-    private String role;
-
-    // 토큰큰
-   @Column(name = "token")
-    private String token;
 }
