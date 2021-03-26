@@ -1,7 +1,7 @@
 plugins {
     id 'org.springframework.boot' version '2.4.3'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-    //querydsl ì¶”ê°€
+    //querydsl Ãß°¡
     id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
     id 'java'
 }
@@ -40,12 +40,12 @@ dependencies {
 
     compile group: 'org.bgee.log4jdbc-log4j2', name: 'log4jdbc-log4j2-jdbc4.1', version: '1.16'
     runtimeOnly 'mysql:mysql-connector-java'
-    //querydsl ì¶”ê°€
+    //querydsl Ãß°¡
     implementation 'com.querydsl:querydsl-jpa'
 }
 
-/* Querydsl Q-class ì¶”ê°€ ì½”ë“œ */
-//querydsl ì¶”ê°€ ì‹œì‘
+/* Querydsl Q-class Ãß°¡ ÄÚµå */
+//querydsl Ãß°¡ ½ÃÀÛ
 def querydslDir = "$buildDir/generated/querydsl"
 
 querydsl {
@@ -61,7 +61,7 @@ configurations {
 compileQuerydsl {
     options.annotationProcessorPath = configurations.querydsl
 }
-//querydsl ì¶”ê°€ ë
+//querydsl Ãß°¡ ³¡
 
 test {
     useJUnitPlatform()
