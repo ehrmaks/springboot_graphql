@@ -31,8 +31,6 @@ public class MemberService {
     @Autowired
     private MemberRepository memberRepository;
 
-
-
     @PersistenceContext
     private EntityManager em; // 영속성 객체를 자동으로 삽입해줌
 

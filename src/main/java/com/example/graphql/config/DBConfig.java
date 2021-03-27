@@ -1,4 +1,4 @@
-package com.example.graphql.configuration;
+package com.example.graphql.config;
 
 import javax.sql.DataSource;
 
@@ -18,7 +18,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 @PropertySource("classpath:/application.yml")
-public class DBConfiguration {
+public class DBConfig {
     @Autowired
     private ApplicationContext applicationContext;
 
