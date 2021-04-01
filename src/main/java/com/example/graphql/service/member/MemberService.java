@@ -1,11 +1,10 @@
 package com.example.graphql.service.member;
 
 import com.example.graphql.domain.repository.MemberRepository;
-import com.example.graphql.domain.vo.Member;
-import com.example.graphql.domain.vo.QMember;
+import com.example.graphql.domain.vo.MemberVo;
+import com.example.graphql.domain.vo.QMemberVo;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import io.leangen.graphql.annotations.GraphQLArgument;
 import io.leangen.graphql.annotations.GraphQLMutation;
@@ -21,9 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @GraphQLApi
@@ -44,7 +41,7 @@ public class MemberService {
         }
     * */
     @GraphQLQuery(name = "getAllMembers")
-    public List<Member> getAllMembers() {
+    public List<MemberVo> getAllMembers() {
         return memberRepository.findAll();
     }
 
@@ -64,7 +61,7 @@ public class MemberService {
         }
     * */
     @GraphQLQuery(name = "getPagingMember")
-    public Page<Member> getPagingMember(
+    public Page<MemberVo> getPagingMember(
     		@GraphQLArgument(name = "page") int page, 
     		@GraphQLArgument(name = "size") int size) {
         Pageable pageable = PageRequest.of(page, size, Direction.DESC, "memberNo");
@@ -92,7 +89,7 @@ public class MemberService {
         }
     * */
     @GraphQLQuery(name = "getMemberList")
-    public Page<Member> getMemberList(
+    public Page<MemberVo> getMemberList(
     		@GraphQLArgument(name = "page") int page, 
     		@GraphQLArgument(name = "size") int size, 
     		@GraphQLArgument(name = "name") String name, 
@@ -130,13 +127,13 @@ public class MemberService {
     // Predicate 필터 조건 설정
     public Predicate predicate(String name, String email) {
         // 멤버 Entity 경로를 가져옴
-        QMember m = QMember.member;
+        QMemberVo m = QMemberVo.memberVo;
 
         // where 조건절의 동적 쿼리를 위한 셋팅
         BooleanBuilder builder = new BooleanBuilder();
 
         if (name != null) {
-            builder.and(m.name.like("%" + name + "%"));
+            builder.and(m.userName.like("%" + name + "%"));
         }
 
         if (email != null) {
@@ -155,7 +152,7 @@ public class MemberService {
         }
     * */
     @GraphQLQuery(name = "getMember")
-    public Member getMember(@GraphQLArgument(name = "memberNo") Integer memberNo) {
+    public MemberVo getMember(@GraphQLArgument(name = "memberNo") Integer memberNo) {
         return memberRepository.findById(memberNo).get();
     }
 
@@ -176,10 +173,10 @@ public class MemberService {
     * */
     @Transactional
     @GraphQLMutation(name = "insertMember")
-    public int insertMember(@GraphQLArgument(name = "member") Member member) {
-        member.setSecYn("N");
-        member.setUseYn("Y");
-        Integer memberNo = memberRepository.save(member).getMemberNo();
+    public int insertMember(@GraphQLArgument(name = "memberVo") MemberVo memberVo) {
+        memberVo.setSecYn("N");
+        memberVo.setUseYn("Y");
+        Integer memberNo = memberRepository.save(memberVo).getId();
         if (memberNo != null) return 1;
         else return 0;
     }
@@ -202,12 +199,12 @@ public class MemberService {
     * */
     @Transactional
     @GraphQLMutation(name = "updateMember")
-    public int updateMember(@GraphQLArgument(name = "member") Member member) {
-        Integer memberNo = member.getMemberNo();
-        if (member.getMemberNo() != null) {
-            member.setSecYn("N");
-            member.setUseYn("Y");
-            memberRepository.save(member);
+    public int updateMember(@GraphQLArgument(name = "memberVo") MemberVo memberVo) {
+        Integer memberNo = memberVo.getId();
+        if (memberVo.getId() != null) {
+            memberVo.setSecYn("N");
+            memberVo.setUseYn("Y");
+            memberRepository.save(memberVo);
             return 1;
         }
         return 0;

@@ -1,5 +1,6 @@
 package com.example.graphql.domain.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.leangen.graphql.annotations.GraphQLQuery;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -7,6 +8,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Getter
@@ -18,12 +21,14 @@ import java.time.LocalDateTime;
 @Table(name = "member_info", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"userId", "email"})
 })
-@SequenceGenerator(name = "MEMBER_SEQ_GENERATOR", sequenceName = "MEMBER_SEQ", initialValue = 1, allocationSize = 1)
-public class Member {
+//@SequenceGenerator(name = "MEMBER_SEQ_GENERATOR", sequenceName = "MEMBER_SEQ", initialValue = 1, allocationSize = 1)
+public class MemberVo {
+    @JsonIgnore
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MEMBER_SEQ_GENERATOR")
-    @GraphQLQuery(name = "memberNo")
-    private Integer memberNo;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
+    @GraphQLQuery(name = "id")
+    private Integer id;
 
     // 아이디
     @Column(length = 30, nullable = false)
@@ -37,8 +42,8 @@ public class Member {
 
     // 이름
     @Column(length = 20, nullable = false)
-    @GraphQLQuery(name = "name")
-    private String name;
+    @GraphQLQuery(name = "userName")
+    private String userName;
 
     // 이메일
     @Column(length = 100, nullable = false)
@@ -89,4 +94,15 @@ public class Member {
     @Column(length = 2)
     @GraphQLQuery(name = "secYn")
     private String secYn;
+
+    @JsonIgnore
+    @Column(name = "activated")
+    private boolean activated;
+
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(
+            name = "user_authority",
+            joinColumns = {@JoinColumn(name = "id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")})
+    private Set<Authority> authorities = new HashSet<>();
 }

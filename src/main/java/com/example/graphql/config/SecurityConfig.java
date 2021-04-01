@@ -45,8 +45,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.accessDeniedHandler(jwtAccessDeniedHandler)
 				.and().headers().frameOptions().sameOrigin()
 				.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-				.and().authorizeRequests().antMatchers("/graphql/**").permitAll()
-//				.antMatchers("/api/authenticate").permitAll()
+				.and().authorizeRequests().antMatchers("/login").permitAll()
+				.and().authorizeRequests().antMatchers("/sign-up").permitAll()
+//				.and().authorizeRequests().antMatchers("/graphql/**").authenticated()
 //				.antMatchers("/api/signup").permitAll()
 				.anyRequest().authenticated()
 				// JwtFilter�� addFilterBefore �޼ҵ�� ����ߴ� JwtSecurityConfig Ŭ������ �������ݴϴ�.
