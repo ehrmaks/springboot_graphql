@@ -2,7 +2,6 @@ package com.example.graphql.wrapper;
 
 import com.example.graphql.result.BaseSuccessResult;
 import com.example.graphql.result.Result;
-import com.example.graphql.util.MessageUtil;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -24,7 +23,7 @@ public abstract class AbstractResultView<T> implements Serializable {
         // 기본 성공 코드로 설정
         Result result = BaseSuccessResult.SUCCESS;
         this.code = result.getResultCode();
-        this.message = MessageUtil.getMessage(result.getResultMsgId());
+//        this.message = MessageUtil.getMessage(result.getResultMsgId());
     }
 
     public AbstractResultView(T data) {
@@ -40,7 +39,7 @@ public abstract class AbstractResultView<T> implements Serializable {
      */
     public AbstractResultView<T> setResult(Result result) {
         this.code = result.getResultCode();
-        this.message = MessageUtil.getMessage(result.getResultMsgId(), result.getResultMsgArgs());
+//        this.message = MessageUtil.getMessage(result.getResultMsgId(), result.getResultMsgArgs());
         return this;
     }
 
@@ -85,9 +84,9 @@ public abstract class AbstractResultView<T> implements Serializable {
      *
      * @return resultMsg
      */
-    public String getMessage() {
-        return message;
-    }
+//    public String getMessage() {
+//        return message;
+//    }
 
     /**
      * resultMsg의 setter 메소드

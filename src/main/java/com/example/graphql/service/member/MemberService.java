@@ -34,7 +34,7 @@ public class MemberService {
     /*
         query {
             getAllMembers {
-                memberNo
+                memberId
                 userId
                 ...
             }
@@ -49,7 +49,7 @@ public class MemberService {
         query {
           getPagingMember(page: 1, size: 5) {
             content{
-              memberNo
+              memberId
               userId
               profileImg
               address1
@@ -64,14 +64,14 @@ public class MemberService {
     public Page<MemberVo> getPagingMember(
     		@GraphQLArgument(name = "page") int page, 
     		@GraphQLArgument(name = "size") int size) {
-        Pageable pageable = PageRequest.of(page, size, Direction.DESC, "memberNo");
+        Pageable pageable = PageRequest.of(page, size, Direction.DESC, "memberId");
         return memberRepository.findAll(pageable);
     }
 
     /*
         query {
           getMemberList(page:1, size:5, name: "jskim", email:"qwefk1234") {
-            memberNo
+            memberId
             userId
             name
             email
@@ -109,7 +109,7 @@ public class MemberService {
 //                                .where(builder)
 //                                .limit(size)
 //                                .offset((page - 1) * size)
-//                                .orderBy(m.memberNo.desc())
+//                                .orderBy(m.memberId.desc())
 //                                .fetch();
 //
 //        map.put("data", list);
@@ -119,7 +119,7 @@ public class MemberService {
 //        return map;
 
         // Page_Member
-        Pageable pageable = PageRequest.of(page, size, Direction.DESC, "memberNo");
+        Pageable pageable = PageRequest.of(page, size, Direction.DESC, "memberId");
 
         return memberRepository.findAll(predicate(name, email), pageable);
     }
@@ -145,15 +145,15 @@ public class MemberService {
 
     /*
         query {
-            getMember(memberNo: 25) {
+            getMember(memberId: 25) {
                 userId
                 ...
             }
         }
     * */
     @GraphQLQuery(name = "getMember")
-    public MemberVo getMember(@GraphQLArgument(name = "memberNo") Integer memberNo) {
-        return memberRepository.findById(memberNo).get();
+    public MemberVo getMember(@GraphQLArgument(name = "memberId") Integer memberId) {
+        return memberRepository.findById(memberId).get();
     }
 
     /*
@@ -176,8 +176,8 @@ public class MemberService {
     public int insertMember(@GraphQLArgument(name = "memberVo") MemberVo memberVo) {
         memberVo.setSecYn("N");
         memberVo.setUseYn("Y");
-        Integer memberNo = memberRepository.save(memberVo).getId();
-        if (memberNo != null) return 1;
+        Integer memberId = memberRepository.save(memberVo).getMemberId();
+        if (memberId != null) return 1;
         else return 0;
     }
 
@@ -200,8 +200,7 @@ public class MemberService {
     @Transactional
     @GraphQLMutation(name = "updateMember")
     public int updateMember(@GraphQLArgument(name = "memberVo") MemberVo memberVo) {
-        Integer memberNo = memberVo.getId();
-        if (memberVo.getId() != null) {
+        if (memberVo.getMemberId() != null) {
             memberVo.setSecYn("N");
             memberVo.setUseYn("Y");
             memberRepository.save(memberVo);
@@ -212,14 +211,14 @@ public class MemberService {
 
     /*
         mutation{
-          deleteMember(memberNo: 28)
+          deleteMember(memberId: 28)
         }
     * */
     @Transactional
     @GraphQLMutation(name = "deleteMember")
-    public int deleteMember(@GraphQLArgument(name = "memberNo") Integer memberNo) {
-        if (memberNo != null) {
-            memberRepository.deleteById(memberNo);
+    public int deleteMember(@GraphQLArgument(name = "memberId") Integer memberId) {
+        if (memberId != null) {
+            memberRepository.deleteById(memberId);
             return 1;
         }
         return 0;

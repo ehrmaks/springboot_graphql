@@ -16,5 +16,5 @@ public interface MemberRepository extends JpaRepository<MemberVo, Integer>, Quer
     Page<MemberVo> findAll(Pageable pageable);
     MemberVo findByEmail(String email);
     @EntityGraph(attributePaths = "authorities")
-    Optional<MemberVo> findOneWithAuthoritiesByUserName(String userName);
+    Optional<MemberVo> findOneWithAuthoritiesByEmail(String email);
 }

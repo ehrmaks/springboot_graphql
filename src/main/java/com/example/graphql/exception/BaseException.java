@@ -1,7 +1,6 @@
 package com.example.graphql.exception;
 
 import com.example.graphql.result.Result;
-import com.example.graphql.util.MessageUtil;
 import org.springframework.core.NestedRuntimeException;
 
 import java.io.PrintStream;
@@ -16,20 +15,22 @@ public abstract class BaseException extends NestedRuntimeException {
     private Throwable cause;
 
     public BaseException(Result result) {
-        this(result.getResultCode(), result.getResultMsgId(), result.getResultMsgArgs());
+        this(result.getResultCode(), result.getResultMsgArgs());
     }
 
-    public BaseException(String errorCode, String errorBundleCode) {
-        super(MessageUtil.getMessage(errorBundleCode));
+    public BaseException(String errorCode) {
+//        super(MessageUtil.getMessage(errorBundleCode));
+        super(errorCode);
         this.errorCode = errorCode;
     }
 
-    public BaseException(String errorCode, String errorMsgId, String errorMsgArg) {
-        this(errorCode, errorMsgId, new String[] {errorMsgArg});
+    public BaseException(String errorCode, String errorMsgArg) {
+        this(errorCode, new String[] {errorMsgArg});
     }
 
-    public BaseException(String errorCode, String errorMsgId, String[] errorMsgArgs) {
-        super(MessageUtil.getMessage(errorMsgId, errorMsgArgs));
+    public BaseException(String errorCode, String[] errorMsgArgs) {
+        super(errorCode);
+//        super(MessageUtil.getMessage(errorMsgId, errorMsgArgs));
         this.errorCode = errorCode;
         this.errorMsgArgs = errorMsgArgs;
     }

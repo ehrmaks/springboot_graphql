@@ -23,20 +23,20 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(final String userName) {
-        return memberRepository.findOneWithAuthoritiesByUserName(userName)
-                .map(memberVo -> createUser(userName, memberVo))
-                .orElseThrow(() -> new UsernameNotFoundException(userName + " -> 데이터베이스에서 찾을 수 없습니다."));
+    public UserDetails loadUserByUsername(final String email) {
+        return memberRepository.findOneWithAuthoritiesByEmail(email)
+                .map(memberVo -> createUser(email, memberVo))
+                .orElseThrow(() -> new UsernameNotFoundException(email + " -> 데이터베이스에서 찾을 수 없습니다."));
     }
 
-    private org.springframework.security.core.userdetails.User createUser(String name, MemberVo memberVo) {
+    private org.springframework.security.core.userdetails.User createUser(String email, MemberVo memberVo) {
         if (!memberVo.isActivated()) {
-            throw new RuntimeException(name + " -> 활성화되어 있지 않습니다.");
+            throw new RuntimeException(email + " -> 활성화되어 있지 않습니다.");
         }
         List<GrantedAuthority> grantedAuthorities = memberVo.getAuthorities().stream()
                 .map(authority -> new SimpleGrantedAuthority(authority.getAuthorityName()))
                 .collect(Collectors.toList());
-        return new org.springframework.security.core.userdetails.User(memberVo.getUserName(),
+        return new org.springframework.security.core.userdetails.User(memberVo.getEmail(),
                 memberVo.getPasswd(),
                 grantedAuthorities);
     }

@@ -16,6 +16,8 @@ import java.util.Set;
 @Setter
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @ToString
 @Table(name = "member_info", uniqueConstraints = {
@@ -25,10 +27,10 @@ import java.util.Set;
 public class MemberVo {
     @JsonIgnore
     @Id
+    @Column(name = "member_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    @GraphQLQuery(name = "id")
-    private Integer id;
+    @GraphQLQuery(name = "member_id")
+    private Integer memberId;
 
     // 아이디
     @Column(length = 30, nullable = false)
@@ -102,7 +104,7 @@ public class MemberVo {
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "user_authority",
-            joinColumns = {@JoinColumn(name = "id", referencedColumnName = "id")},
+            joinColumns = {@JoinColumn(name = "member_id", referencedColumnName = "member_id")},
             inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")})
-    private Set<Authority> authorities = new HashSet<>();
+    private Set<Authority> authorities;
 }
