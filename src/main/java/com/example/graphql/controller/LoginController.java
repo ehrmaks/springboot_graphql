@@ -1,10 +1,12 @@
 package com.example.graphql.controller;
 
-import com.example.graphql.domain.vo.AccountVo;
-import com.example.graphql.domain.vo.LoginInputVo;
-import com.example.graphql.domain.vo.SignUpInpVo;
+import com.example.graphql.model.repository.MemberRepository;
+import com.example.graphql.model.response.SingleResult;
+import com.example.graphql.model.vo.AccountVo;
+import com.example.graphql.model.vo.LoginInputVo;
+import com.example.graphql.model.vo.SignUpInpVo;
 import com.example.graphql.service.login.LoginService;
-import com.example.graphql.wrapper.ResultView;
+import com.example.graphql.service.response.ResponseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -18,16 +20,19 @@ public class LoginController {
     @Autowired
     private LoginService loginService;
 
+    @Autowired
+    private ResponseService responseService;
+
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResultView<AccountVo> userLogin(@RequestBody LoginInputVo loginInputVo) {
-        System.out.println("**********************  " + loginInputVo.getEmail());
-        return new ResultView<AccountVo>(loginService.validateUser(loginInputVo));
+    public SingleResult<AccountVo> userLogin(@RequestBody LoginInputVo loginInputVo) {
+
+        return responseService.getSingleResult(loginService.validateUser(loginInputVo));
     }
 
     @PostMapping(value = "/sign-up", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResultView<Integer> signUp(@RequestBody SignUpInpVo signUpInpVo) {
+    public SingleResult<Integer> signUp(@RequestBody SignUpInpVo signUpInpVo) {
         log.info("is data : " + signUpInpVo);
         System.out.println(signUpInpVo);
-        return new ResultView<Integer>(loginService.signUp(signUpInpVo));
+        return responseService.getSingleResult(loginService.signUp(signUpInpVo));
     }
 }

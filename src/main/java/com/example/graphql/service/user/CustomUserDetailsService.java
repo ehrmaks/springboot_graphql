@@ -1,7 +1,7 @@
 package com.example.graphql.service.user;
 
-import com.example.graphql.domain.repository.MemberRepository;
-import com.example.graphql.domain.vo.MemberVo;
+import com.example.graphql.model.repository.MemberRepository;
+import com.example.graphql.model.vo.MemberVo;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

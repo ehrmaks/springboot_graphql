@@ -1,8 +1,8 @@
 package com.example.graphql.service.member;
 
-import com.example.graphql.domain.repository.MemberRepository;
-import com.example.graphql.domain.vo.MemberVo;
-import com.example.graphql.domain.vo.QMemberVo;
+import com.example.graphql.model.repository.MemberRepository;
+import com.example.graphql.model.vo.MemberVo;
+import com.example.graphql.model.vo.QMemberVo;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 

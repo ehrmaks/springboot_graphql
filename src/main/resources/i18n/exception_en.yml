@@ -1,0 +1,12 @@
+unKnown:
+  code: "-9999"
+  msg: "An unknown error has occurred."
+userNotFound:
+  code: "-1"
+  msg: "It is a non-existent member."
+loginFail:
+  code: "ESVC022"
+  msg: "The ID is not registered, or the password is incorrect."
+loginUserEmpty:
+  code: "ESVC005"
+  msg: "There is no member information that matches the information you entered, please check again."

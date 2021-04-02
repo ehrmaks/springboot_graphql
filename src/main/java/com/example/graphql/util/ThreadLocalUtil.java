@@ -1,9 +1,9 @@
 package com.example.graphql.util;
 
 import com.example.graphql.constant.Constant;
-import com.example.graphql.domain.vo.AccountVo;
-import com.example.graphql.domain.vo.RequestInfoVo;
-import com.example.graphql.domain.vo.RequestParameterInfo;
+import com.example.graphql.model.vo.AccountVo;
+import com.example.graphql.model.vo.RequestInfoVo;
+import com.example.graphql.model.vo.RequestParameterInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

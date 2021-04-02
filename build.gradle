@@ -26,6 +26,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    // message yml을 사용하기 위한 의존성 주입
+    implementation 'net.rakugakibox.util:yaml-resource-bundle:1.1'
+    
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     
     compileOnly 'org.projectlombok:lombok'
