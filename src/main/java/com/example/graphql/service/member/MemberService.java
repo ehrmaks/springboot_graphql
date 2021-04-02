@@ -1,8 +1,8 @@
 package com.example.graphql.service.member;
 
+import com.example.graphql.model.entity.Member;
 import com.example.graphql.model.repository.MemberRepository;
-import com.example.graphql.model.vo.MemberVo;
-import com.example.graphql.model.vo.QMemberVo;
+import com.example.graphql.model.entity.QMember;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 
@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,8 +41,9 @@ public class MemberService {
             }
         }
     * */
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GraphQLQuery(name = "getAllMembers")
-    public List<MemberVo> getAllMembers() {
+    public List<Member> getAllMembers() {
         return memberRepository.findAll();
     }
 
@@ -60,8 +62,9 @@ public class MemberService {
           }
         }
     * */
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GraphQLQuery(name = "getPagingMember")
-    public Page<MemberVo> getPagingMember(
+    public Page<Member> getPagingMember(
     		@GraphQLArgument(name = "page") int page, 
     		@GraphQLArgument(name = "size") int size) {
         Pageable pageable = PageRequest.of(page, size, Direction.DESC, "memberId");
@@ -88,11 +91,12 @@ public class MemberService {
           }
         }
     * */
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GraphQLQuery(name = "getMemberList")
-    public Page<MemberVo> getMemberList(
+    public Page<Member> getMemberList(
     		@GraphQLArgument(name = "page") int page, 
     		@GraphQLArgument(name = "size") int size, 
-    		@GraphQLArgument(name = "name") String name, 
+    		@GraphQLArgument(name = "userName") String userName,
     		@GraphQLArgument(name = "email") String email) {
 //        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
     	// 멤버 Entity 경로를 가져옴
@@ -121,19 +125,19 @@ public class MemberService {
         // Page_Member
         Pageable pageable = PageRequest.of(page, size, Direction.DESC, "memberId");
 
-        return memberRepository.findAll(predicate(name, email), pageable);
+        return memberRepository.findAll(predicate(userName, email), pageable);
     }
 
     // Predicate 필터 조건 설정
-    public Predicate predicate(String name, String email) {
+    public Predicate predicate(String userName, String email) {
         // 멤버 Entity 경로를 가져옴
-        QMemberVo m = QMemberVo.memberVo;
+        QMember m = QMember.member;
 
         // where 조건절의 동적 쿼리를 위한 셋팅
         BooleanBuilder builder = new BooleanBuilder();
 
-        if (name != null) {
-            builder.and(m.userName.like("%" + name + "%"));
+        if (userName != null) {
+            builder.and(m.userName.like("%" + userName + "%"));
         }
 
         if (email != null) {
@@ -151,8 +155,9 @@ public class MemberService {
             }
         }
     * */
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GraphQLQuery(name = "getMember")
-    public MemberVo getMember(@GraphQLArgument(name = "memberId") Integer memberId) {
+    public Member getMember(@GraphQLArgument(name = "memberId") Integer memberId) {
         return memberRepository.findById(memberId).get();
     }
 
@@ -172,11 +177,12 @@ public class MemberService {
         }
     * */
     @Transactional
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GraphQLMutation(name = "insertMember")
-    public int insertMember(@GraphQLArgument(name = "memberVo") MemberVo memberVo) {
-        memberVo.setSecYn("N");
-        memberVo.setUseYn("Y");
-        Integer memberId = memberRepository.save(memberVo).getMemberId();
+    public int insertMember(@GraphQLArgument(name = "member") Member member) {
+        member.setSecYn("N");
+        member.setUseYn("Y");
+        Integer memberId = memberRepository.save(member).getMemberId();
         if (memberId != null) return 1;
         else return 0;
     }
@@ -198,12 +204,13 @@ public class MemberService {
         }
     * */
     @Transactional
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GraphQLMutation(name = "updateMember")
-    public int updateMember(@GraphQLArgument(name = "memberVo") MemberVo memberVo) {
-        if (memberVo.getMemberId() != null) {
-            memberVo.setSecYn("N");
-            memberVo.setUseYn("Y");
-            memberRepository.save(memberVo);
+    public int updateMember(@GraphQLArgument(name = "member") Member member) {
+        if (member.getMemberId() != null) {
+            member.setSecYn("N");
+            member.setUseYn("Y");
+            memberRepository.save(member);
             return 1;
         }
         return 0;
@@ -215,6 +222,7 @@ public class MemberService {
         }
     * */
     @Transactional
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GraphQLMutation(name = "deleteMember")
     public int deleteMember(@GraphQLArgument(name = "memberId") Integer memberId) {
         if (memberId != null) {

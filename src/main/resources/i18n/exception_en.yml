@@ -10,3 +10,9 @@ loginFail:
 loginUserEmpty:
   code: "ESVC005"
   msg: "There is no member information that matches the information you entered, please check again."
+signUpFail:
+  code: "ESVC001"
+  msg: "ID is duplicated."
+notValidToken:
+  code: "ESVC002"
+  msg: "유효한 JWT 토큰이 없습니다."

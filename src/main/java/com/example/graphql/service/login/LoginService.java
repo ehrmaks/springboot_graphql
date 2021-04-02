@@ -1,14 +1,13 @@
 package com.example.graphql.service.login;
 
-import com.example.graphql.advice.ExceptionAdvice;
-import com.example.graphql.advice.exception.CUserFailException;
+import com.example.graphql.advice.exception.CUserLoginFailException;
 import com.example.graphql.advice.exception.CUserNotFoundException;
+import com.example.graphql.advice.exception.SignUpDupException;
+import com.example.graphql.model.entity.Authority;
 import com.example.graphql.model.repository.MemberRepository;
-import com.example.graphql.model.response.code.ErrorCode;
-import com.example.graphql.model.response.result.ErrorResult;
 import com.example.graphql.model.vo.AccountVo;
 import com.example.graphql.model.vo.LoginInputVo;
-import com.example.graphql.model.vo.MemberVo;
+import com.example.graphql.model.entity.Member;
 import com.example.graphql.model.vo.SignUpInpVo;
 import com.example.graphql.jwt.TokenProvider;
 import com.example.graphql.service.response.ResponseService;
@@ -23,6 +22,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
 
 @Slf4j
 @Service
@@ -42,18 +43,16 @@ public class LoginService {
     @Transactional
     public AccountVo validateUser(LoginInputVo loginInputVo) {
         String loginId = loginInputVo.getEmail();
-        MemberVo memberVo = memberRepository.findByEmail(loginId);
+        Member member = memberRepository.findByEmail(loginId);
 
-        if (ObjectUtils.isEmpty(memberVo)) {
+        if (ObjectUtils.isEmpty(member)) {
             throw new CUserNotFoundException();
         }
 
-        boolean isPwValid = CryptoUtil.Password.match(loginInputVo.getPassword(), memberVo.getPasswd());
-        System.out.println(isPwValid);
-
+        boolean isPwValid = CryptoUtil.Password.match(loginInputVo.getPassword(), member.getPasswd());
 
         if (!isPwValid) {
-            throw new CUserFailException();
+            throw new CUserLoginFailException();
         }
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginInputVo.getEmail(), loginInputVo.getPassword());
@@ -62,11 +61,11 @@ public class LoginService {
         String accessToken = tokenProvider.createToken(authentication);
 
         AccountVo accountVo = new AccountVo();
-        accountVo.setUserNm(memberVo.getUserName());
+        accountVo.setUserNm(member.getUserName());
         accountVo.setAccessToken(accessToken);
         accountVo.setLoginId(loginId);
-        accountVo.setId(memberVo.getMemberId());
-        accountVo.setMblNo(memberVo.getPhoneNo());
+        accountVo.setId(member.getMemberId());
+        accountVo.setMblNo(member.getPhoneNo());
 //        redisUtil.putAcount(accountVo.getAccessToken(), accountVo);
 
         return accountVo;
@@ -75,18 +74,25 @@ public class LoginService {
     @Transactional
     public Integer signUp(SignUpInpVo signUpInpVo) {
         String email = signUpInpVo.getUserId();
-        MemberVo dupMember = memberRepository.findByEmail(email);
-        if (StringUtil.isEmpty(dupMember)) {
-            MemberVo memberVo = new MemberVo();
-            memberVo.setEmail(email);
-            memberVo.setUserId(email.split("@")[0]);
-            memberVo.setActivated(true);
-            memberVo.setPasswd(CryptoUtil.Password.encrypt(signUpInpVo.getUserPw()));
-            memberVo.setUserName(signUpInpVo.getUserNm());
-            memberVo.setSecYn("N");
-            memberVo.setUseYn("Y");
-            return memberRepository.save(memberVo).getMemberId();
-        } else
-            return 0;
+        Member dupMember = memberRepository.findByEmail(email);
+
+        if (!StringUtil.isEmpty(dupMember)) throw new SignUpDupException();
+
+        Authority authority = Authority.builder()
+                .authorityName("ROLE_USER")
+                .build();
+
+        Member member = Member.builder()
+                .email(email)
+                .userId(email.split("@")[0])
+                .activated(true)
+                .authorities(Collections.singleton(authority))
+                .passwd(CryptoUtil.Password.encrypt(signUpInpVo.getUserPw()))
+                .userName(signUpInpVo.getUserNm())
+                .secYn("N")
+                .useYn("Y")
+                .build();
+
+        return memberRepository.save(member).getMemberId();
     }
 }

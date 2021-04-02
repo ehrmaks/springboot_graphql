@@ -12,10 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
+@RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public class LoginController {
     @Autowired
     private LoginService loginService;
@@ -23,16 +25,13 @@ public class LoginController {
     @Autowired
     private ResponseService responseService;
 
-    @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/login")
     public SingleResult<AccountVo> userLogin(@RequestBody LoginInputVo loginInputVo) {
-
         return responseService.getSingleResult(loginService.validateUser(loginInputVo));
     }
 
-    @PostMapping(value = "/sign-up", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/sign-up")
     public SingleResult<Integer> signUp(@RequestBody SignUpInpVo signUpInpVo) {
-        log.info("is data : " + signUpInpVo);
-        System.out.println(signUpInpVo);
         return responseService.getSingleResult(loginService.signUp(signUpInpVo));
     }
 }

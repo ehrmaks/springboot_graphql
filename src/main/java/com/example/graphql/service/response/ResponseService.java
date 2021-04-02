@@ -10,26 +10,31 @@ import java.util.List;
 @Service
 public class ResponseService {
 
-    // enum으로 api 요청 결과에 대한 code, message를 정의합니다.
+    // enum으로 api 요청 결과에 대한 success, code, message를 정의합니다.
     public enum CommonResponse {
-        SUCCESS("1", "정상적으로 처리 되었습니다.");
+        SUCCESS(true, "정상적으로 처리 되었습니다.", "SUCCESS");
 
-        String code;
+        boolean success;
         String msg;
+        String code;
 
-        CommonResponse(String code, String msg) {
-            this.code = code;
+        CommonResponse(boolean success, String msg, String code) {
+            this.success = success;
             this.msg = msg;
+            this.code = code;
         }
 
-        public String getCode() {
-            return code;
+        public boolean getSuccess() {
+            return success;
         }
 
         public String getMsg() {
             return msg;
         }
+
+        public String getCode() { return code; }
     }
+
     // 단일건 결과를 처리하는 메소드
     public <T> SingleResult<T> getSingleResult(T data) {
         SingleResult<T> result = new SingleResult<>();
@@ -60,7 +65,7 @@ public class ResponseService {
     }
     // 결과 모델에 api 요청 성공 데이터를 세팅해주는 메소드
     private void setSuccessResult(CommonResult result) {
-        result.setSuccess(true);
+        result.setSuccess(CommonResponse.SUCCESS.getSuccess());
         result.setCode(CommonResponse.SUCCESS.getCode());
         result.setMsg(CommonResponse.SUCCESS.getMsg());
     }

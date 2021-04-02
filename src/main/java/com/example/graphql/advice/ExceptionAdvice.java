@@ -1,28 +1,21 @@
 package com.example.graphql.advice;
 
-import com.example.graphql.advice.exception.BusinessException;
-import com.example.graphql.advice.exception.CUserFailException;
+import com.example.graphql.advice.exception.CUserLoginFailException;
 import com.example.graphql.advice.exception.CUserNotFoundException;
+import com.example.graphql.advice.exception.SignUpDupException;
+import com.example.graphql.advice.exception.TokenException;
 import com.example.graphql.model.response.CommonResult;
 //import com.example.graphql.model.response.ErrorResponse;
-import com.example.graphql.model.response.code.ErrorCode;
 import com.example.graphql.service.response.ResponseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.nio.file.AccessDeniedException;
-import java.util.Enumeration;
 
 @RequiredArgsConstructor
 @RestControllerAdvice
@@ -32,13 +25,19 @@ public class ExceptionAdvice {
 
     private final MessageSource messageSource;
 
+    /**
+     * 얼 수 없는 오류
+     */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected CommonResult defaultException(HttpServletRequest request, Exception e) {
         // 예외 처리의 메시지를 MessageSource에서 가져오도록 수정
         return responseService.getFailResult(getMessage("unKnown.code"), getMessage("unKnown.msg"));
     }
-
+    
+    /**
+     * 유저 데이터가 null인 경우
+     */
     @ExceptionHandler(CUserNotFoundException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected CommonResult userNotFoundException(HttpServletRequest request, CUserNotFoundException e) {
@@ -46,11 +45,44 @@ public class ExceptionAdvice {
         return responseService.getFailResult(getMessage("loginUserEmpty.code"), getMessage("loginUserEmpty.msg"));
     }
 
-    @ExceptionHandler(CUserFailException.class)
+    /**
+     * 로그인 실패할 경우
+     */
+    @ExceptionHandler(CUserLoginFailException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    protected CommonResult userFailException(HttpServletRequest request, CUserFailException e) {
+    protected CommonResult userFailException(HttpServletRequest request, CUserLoginFailException e) {
         // 예외 처리의 메시지를 MessageSource에서 가져오도록 수정
         return responseService.getFailResult(getMessage("loginFail.code"), getMessage("loginFail.msg"));
+    }
+
+    /**
+     * 회원가입 실패할 경우
+     */
+    @ExceptionHandler(SignUpDupException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult signUpFailException(HttpServletRequest request, SignUpDupException e) {
+        // 예외 처리의 메시지를 MessageSource에서 가져오도록 수정
+        return responseService.getFailResult(getMessage("signUpFail.code"), getMessage("signUpFail.msg"));
+    }
+
+    /**
+     * 유효한 토큰이 아닐 경우
+     */
+    @ExceptionHandler(TokenException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResult tokenException(HttpServletRequest request, TokenException e) {
+        // 예외 처리의 메시지를 MessageSource에서 가져오도록 수정
+        return responseService.getFailResult(getMessage("notValidToken.code"), getMessage("notValidToken.msg"));
+    }
+
+    // code정보에 해당하는 메시지를 조회합니다.
+    private String getMessage(String code) {
+        return getMessage(code, null);
+    }
+
+    // code정보, 추가 argument로 현재 locale에 맞는 메시지를 조회합니다.
+    private String getMessage(String code, Object[] args) {
+        return messageSource.getMessage(code, args, LocaleContextHolder.getLocale());
     }
 
 //    /**
@@ -114,14 +146,4 @@ public class ExceptionAdvice {
 //        final ErrorResponse response = ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR);
 //        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 //    }
-
-    // code정보에 해당하는 메시지를 조회합니다.
-    private String getMessage(String code) {
-        return getMessage(code, null);
-    }
-
-    // code정보, 추가 argument로 현재 locale에 맞는 메시지를 조회합니다.
-    private String getMessage(String code, Object[] args) {
-        return messageSource.getMessage(code, args, LocaleContextHolder.getLocale());
-    }
 }

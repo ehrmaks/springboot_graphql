@@ -1,4 +1,4 @@
-package com.example.graphql.model.vo;
+package com.example.graphql.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.leangen.graphql.annotations.GraphQLQuery;
@@ -12,7 +12,6 @@ import java.util.Set;
 
 
 @Getter
-@Setter
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,87 +22,87 @@ import java.util.Set;
         @UniqueConstraint(columnNames = {"userId", "email"})
 })
 //@SequenceGenerator(name = "MEMBER_SEQ_GENERATOR", sequenceName = "MEMBER_SEQ", initialValue = 1, allocationSize = 1)
-public class MemberVo {
+public class Member {
     @JsonIgnore
     @Id
     @Column(name = "member_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     @GraphQLQuery(name = "member_id")
-    private Integer memberId;
+    protected Integer memberId;
 
     // 아이디
     @Column(length = 30, nullable = false)
     @GraphQLQuery(name = "userId")
-    private String userId;
+    protected String userId;
 
     // 패스워드
     @Column(length = 150, nullable = true)
     @GraphQLQuery(name = "passwd")
-    private String passwd;
+    protected String passwd;
 
     // 이름
     @Column(length = 20, nullable = false)
     @GraphQLQuery(name = "userName")
-    private String userName;
+    protected String userName;
 
     // 이메일
     @Column(length = 100, nullable = false)
     @GraphQLQuery(name = "email")
-    private String email;
+    protected String email;
 
     // 가입일
     @CreationTimestamp
     @GraphQLQuery(name = "createDt")
-    private LocalDateTime createDt;
+    protected LocalDateTime createDt;
 
     // 수정일
     @UpdateTimestamp
     @GraphQLQuery(name = "updateDt")
-    private LocalDateTime updateDt;
+    protected LocalDateTime updateDt;
 
     // 주소1
     @Column(length = 100, nullable = true)
     @GraphQLQuery(name = "address1")
-    private String address1;
+    protected String address1;
 
     // 주소2
     @Column(length = 100, nullable = true)
     @GraphQLQuery(name = "address2")
-    private String address2;
+    protected String address2;
 
     // 우편번호
     @Column(length = 20, nullable = true)
     @GraphQLQuery(name = "postNo")
-    private String postNo;
+    protected String postNo;
 
     // 프로필 이미지
     @Column(length = 1024)
     @GraphQLQuery(name = "profileImg")
-    private String profileImg;
+    protected String profileImg;
 
     // 폰번호
     @Column(length = 30)
     @GraphQLQuery(name = "phoneNo")
-    private String phoneNo;
+    protected String phoneNo;
 
     // 사용여부
     @Column(length = 2)
     @GraphQLQuery(name = "useYn")
-    private String useYn;
+    protected String useYn;
 
     // 탈퇴여부
     @Column(length = 2)
     @GraphQLQuery(name = "secYn")
-    private String secYn;
+    protected String secYn;
 
     @JsonIgnore
     @Column(name = "activated")
-    private boolean activated;
+    protected boolean activated;
 
     @ManyToMany
     @JoinTable(
             name = "user_authority",
             joinColumns = {@JoinColumn(name = "member_id", referencedColumnName = "member_id")},
             inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")})
-    private Set<Authority> authorities;
+    protected Set<Authority> authorities;
 }
