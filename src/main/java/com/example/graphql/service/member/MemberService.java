@@ -3,6 +3,8 @@ package com.example.graphql.service.member;
 import com.example.graphql.model.entity.Member;
 import com.example.graphql.model.repository.MemberRepository;
 import com.example.graphql.model.entity.QMember;
+import com.example.graphql.model.response.SingleResult;
+import com.example.graphql.service.response.ResponseService;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 
@@ -28,6 +30,9 @@ import java.util.List;
 public class MemberService {
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private ResponseService responseService;
 
     @PersistenceContext
     private EntityManager em; // 영속성 객체를 자동으로 삽입해줌
@@ -72,28 +77,24 @@ public class MemberService {
     }
 
     /*
-        query {
-          getMemberList(page:1, size:5, name: "jskim", email:"qwefk1234") {
-            memberId
-            userId
-            name
-            email
-          }
-        }
-    * */
-    /*
         query{
           getMemberList(page: 0, size: 5, name:"사나", email:"kjsfk") {
-            content {
-              userId
+            success
+            code
+            msg
+            data {
+              content {
+                member_id
+                userId
+                userName
+              }
             }
-            totalPages
           }
         }
     * */
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+//    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GraphQLQuery(name = "getMemberList")
-    public Page<Member> getMemberList(
+    public SingleResult<Page<Member>> getMemberList(
     		@GraphQLArgument(name = "page") int page, 
     		@GraphQLArgument(name = "size") int size, 
     		@GraphQLArgument(name = "userName") String userName,
@@ -125,7 +126,7 @@ public class MemberService {
         // Page_Member
         Pageable pageable = PageRequest.of(page, size, Direction.DESC, "memberId");
 
-        return memberRepository.findAll(predicate(userName, email), pageable);
+        return responseService.getSingleResult(memberRepository.findAll(predicate(userName, email), pageable));
     }
 
     // Predicate 필터 조건 설정

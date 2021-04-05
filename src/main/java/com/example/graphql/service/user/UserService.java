@@ -1,8 +1,6 @@
-package com.example.graphql.service.login;
+package com.example.graphql.service.user;
 
-import com.example.graphql.advice.exception.CUserLoginFailException;
-import com.example.graphql.advice.exception.CUserNotFoundException;
-import com.example.graphql.advice.exception.SignUpDupException;
+import com.example.graphql.advice.exception.CommonException;
 import com.example.graphql.model.entity.Authority;
 import com.example.graphql.model.repository.MemberRepository;
 import com.example.graphql.model.vo.AccountVo;
@@ -27,7 +25,7 @@ import java.util.Collections;
 
 @Slf4j
 @Service
-public class LoginService {
+public class UserService {
     @Autowired
     private MemberRepository memberRepository;
 
@@ -46,13 +44,13 @@ public class LoginService {
         Member member = memberRepository.findByEmail(loginId);
 
         if (ObjectUtils.isEmpty(member)) {
-            throw new CUserNotFoundException();
+            throw new CommonException("loginUserEmpty");
         }
 
         boolean isPwValid = CryptoUtil.Password.match(loginInputVo.getPassword(), member.getPasswd());
 
         if (!isPwValid) {
-            throw new CUserLoginFailException();
+            throw new CommonException("loginFail");
         }
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginInputVo.getEmail(), loginInputVo.getPassword());
@@ -76,7 +74,7 @@ public class LoginService {
         String email = signUpInpVo.getUserId();
         Member dupMember = memberRepository.findByEmail(email);
 
-        if (!StringUtil.isEmpty(dupMember)) throw new SignUpDupException();
+        if (!StringUtil.isEmpty(dupMember)) throw new CommonException("signUpFail");
 
         Authority authority = Authority.builder()
                 .authorityName("ROLE_USER")

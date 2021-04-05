@@ -1,11 +1,10 @@
 package com.example.graphql.controller;
 
-import com.example.graphql.model.repository.MemberRepository;
 import com.example.graphql.model.response.SingleResult;
 import com.example.graphql.model.vo.AccountVo;
 import com.example.graphql.model.vo.LoginInputVo;
 import com.example.graphql.model.vo.SignUpInpVo;
-import com.example.graphql.service.login.LoginService;
+import com.example.graphql.service.user.UserService;
 import com.example.graphql.service.response.ResponseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
-public class LoginController {
+public class UserController {
     @Autowired
-    private LoginService loginService;
+    private UserService loginService;
 
     @Autowired
     private ResponseService responseService;

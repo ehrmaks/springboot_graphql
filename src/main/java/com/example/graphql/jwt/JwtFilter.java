@@ -1,8 +1,5 @@
 package com.example.graphql.jwt;
 
-import com.example.graphql.advice.exception.TokenException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -41,13 +38,10 @@ public class JwtFilter extends GenericFilterBean {
 		HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
 		String jwt = resolveToken(httpServletRequest);
 		String requestURI = httpServletRequest.getRequestURI();
-		System.out.println("******************* jwt 토큰 : " + jwt);
-		System.out.println("******************* jwt requestURI : " + requestURI);
 
 		if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
 			Authentication authentication = tokenProvider.getAuthentication(jwt);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
-			System.out.println("Security Context에 '{}' 인증 정보를 저장했습니다");
 			logger.debug("Security Context에 '{}' 인증 정보를 저장했습니다, uri: {}", authentication.getName(), requestURI);
 		} else {
 			logger.debug("유효한 JWT 토큰이 없습니다., uri: {}", requestURI);

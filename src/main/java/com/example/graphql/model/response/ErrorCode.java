@@ -1,10 +1,9 @@
-package com.example.graphql.model.response.code;
+package com.example.graphql.model.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ErrorCode {
-
     // OpenApi Common
     INVALID_INPUT_VALUE(400, " 유효하지 않은 입력 값 입니다."), // 400
     METHOD_NOT_ALLOWED(405,  " 유효하지 않은 입력 값 입니다."),

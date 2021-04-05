@@ -1,9 +1,6 @@
 package com.example.graphql.advice;
 
-import com.example.graphql.advice.exception.CUserLoginFailException;
-import com.example.graphql.advice.exception.CUserNotFoundException;
-import com.example.graphql.advice.exception.SignUpDupException;
-import com.example.graphql.advice.exception.TokenException;
+import com.example.graphql.advice.exception.*;
 import com.example.graphql.model.response.CommonResult;
 //import com.example.graphql.model.response.ErrorResponse;
 import com.example.graphql.service.response.ResponseService;
@@ -34,45 +31,18 @@ public class ExceptionAdvice {
         // 예외 처리의 메시지를 MessageSource에서 가져오도록 수정
         return responseService.getFailResult(getMessage("unKnown.code"), getMessage("unKnown.msg"));
     }
-    
-    /**
-     * 유저 데이터가 null인 경우
-     */
-    @ExceptionHandler(CUserNotFoundException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    protected CommonResult userNotFoundException(HttpServletRequest request, CUserNotFoundException e) {
-        // 예외 처리의 메시지를 MessageSource에서 가져오도록 수정
-        return responseService.getFailResult(getMessage("loginUserEmpty.code"), getMessage("loginUserEmpty.msg"));
-    }
 
     /**
-     * 로그인 실패할 경우
+     * 공통 Exception 처리
+     * @params request, e
      */
-    @ExceptionHandler(CUserLoginFailException.class)
+    @ExceptionHandler(CommonException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    protected CommonResult userFailException(HttpServletRequest request, CUserLoginFailException e) {
+    protected CommonResult commonException(HttpServletRequest request, CommonException e) {
+        String code = e.getMessage() + ".code";
+        String message = e.getMessage() + ".msg";
         // 예외 처리의 메시지를 MessageSource에서 가져오도록 수정
-        return responseService.getFailResult(getMessage("loginFail.code"), getMessage("loginFail.msg"));
-    }
-
-    /**
-     * 회원가입 실패할 경우
-     */
-    @ExceptionHandler(SignUpDupException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    protected CommonResult signUpFailException(HttpServletRequest request, SignUpDupException e) {
-        // 예외 처리의 메시지를 MessageSource에서 가져오도록 수정
-        return responseService.getFailResult(getMessage("signUpFail.code"), getMessage("signUpFail.msg"));
-    }
-
-    /**
-     * 유효한 토큰이 아닐 경우
-     */
-    @ExceptionHandler(TokenException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    protected CommonResult tokenException(HttpServletRequest request, TokenException e) {
-        // 예외 처리의 메시지를 MessageSource에서 가져오도록 수정
-        return responseService.getFailResult(getMessage("notValidToken.code"), getMessage("notValidToken.msg"));
+        return responseService.getFailResult(getMessage(code), getMessage(message));
     }
 
     // code정보에 해당하는 메시지를 조회합니다.
