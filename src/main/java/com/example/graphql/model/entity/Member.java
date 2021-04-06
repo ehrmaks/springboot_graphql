@@ -25,9 +25,9 @@ import java.util.Set;
 public class Member {
     @JsonIgnore
     @Id
-    @Column(name = "member_id")
+    @Column(name = "memberId")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @GraphQLQuery(name = "member_id")
+    @GraphQLQuery(name = "memberId")
     protected Integer memberId;
 
     // 아이디
@@ -102,7 +102,7 @@ public class Member {
     @ManyToMany
     @JoinTable(
             name = "user_authority",
-            joinColumns = {@JoinColumn(name = "member_id", referencedColumnName = "member_id")},
+            joinColumns = {@JoinColumn(name = "memberId", referencedColumnName = "memberId")},
             inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")})
     protected Set<Authority> authorities;
 }

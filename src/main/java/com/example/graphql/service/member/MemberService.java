@@ -92,7 +92,7 @@ public class MemberService {
           }
         }
     * */
-//    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GraphQLQuery(name = "getMemberList")
     public SingleResult<Page<Member>> getMemberList(
     		@GraphQLArgument(name = "page") int page, 
