@@ -37,7 +37,7 @@ public class ExceptionAdvice {
      * @params request, e
      */
     @ExceptionHandler(CommonException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.OK)
     protected CommonResult commonException(HttpServletRequest request, CommonException e) {
         String code = e.getMessage() + ".code";
         String message = e.getMessage() + ".msg";

@@ -8,10 +8,16 @@ import com.example.graphql.service.response.ResponseService;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 
+import graphql.schema.DataFetchingEnvironment;
+import graphql.servlet.GraphQLContext;
+import graphql.servlet.GraphQLServletListener;
+import io.jsonwebtoken.Jwts;
 import io.leangen.graphql.annotations.GraphQLArgument;
 import io.leangen.graphql.annotations.GraphQLMutation;
 import io.leangen.graphql.annotations.GraphQLQuery;
+import io.leangen.graphql.annotations.GraphQLRootContext;
 import io.leangen.graphql.spqr.spring.annotations.GraphQLApi;
+import io.leangen.graphql.spqr.spring.autoconfigure.DefaultGlobalContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,9 +26,14 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -231,5 +242,17 @@ public class MemberService {
             return 1;
         }
         return 0;
+    }
+
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @GraphQLMutation(name = "logoutMember")
+    public SingleResult<Boolean> logoutMember(@GraphQLRootContext DefaultGlobalContext<ServletWebRequest> context) {
+        String bearerToken = context.getNativeRequest().getHeader("Authorization");
+        String accessToken = "";
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")){
+            accessToken = bearerToken.substring(7);
+        }
+        System.out.println("accessToken : " + accessToken);
+        return responseService.getSingleResult(true);
     }
 }
